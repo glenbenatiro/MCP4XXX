@@ -59,8 +59,9 @@ write_data (uint8_t          addr,
             MCP4XXX::COMMAND cmd)
 {
   char txdata = (addr & 0xf) << 4 | (static_cast<uint8_t>(cmd) & 0x3) << 2;
-                        
-  spi_xfer (&txdata, 1);
+  char rxdata = 0;
+
+  spi_xfer (&rxdata, &txdata, 1);
 }
 
 void MCP4XXX:: 
@@ -73,8 +74,9 @@ write_data (uint8_t           addr,
                       (data & 0x3ff);
                         
   char    txdata[2] = {temp & 0xff, (temp & 0xff00) >> 8};
+  char    rxdata[2] = {0, 0};
 
-  spi_xfer (txdata, 2);
+  spi_xfer (rxdata, txdata, 2);
 }
 
 bool MCP4XXX::

@@ -46,6 +46,10 @@ class MCP4XXX
 
     static constexpr double WIPER_RESISTANCE  = 75; 
 
+  protected:
+    void*     m_controller;
+    unsigned  m_spi_channel;
+
   public:
     enum class PART_NUMBER
     {
@@ -68,7 +72,6 @@ class MCP4XXX
     };
 
   private: 
-    void*     m_controller              = nullptr;
     uint16_t  m_wiper_value             = 0x80;
     unsigned  m_resolution_int          = 8,
               m_resolution_bits         = 256;
@@ -86,8 +89,8 @@ class MCP4XXX
     uint16_t  hw_wiper_value              ();
   
   protected:
-    virtual void init     (void* controller)            = 0;
-    virtual void spi_xfer (char* data, unsigned length) = 0;
+    virtual void init     (void* controller, unsigned spi_channel = 1)  = 0;
+    virtual void spi_xfer (char* rxd, char* txd, unsigned length)       = 0;
 
   public:
     MCP4XXX   (MCP4XXX::PART_NUMBER part, MCP4XXX::RESISTANCE_VERSION resistance);
