@@ -69,12 +69,12 @@ write_data (uint8_t           addr,
             MCP4XXX::COMMAND  cmd, 
             uint16_t          data)
 {
-  uint8_t temp      = (addr & 0xf) << 12 | 
-                      (static_cast<uint8_t>(cmd)  & 0x3) << 10 | 
-                      (data & 0x3ff);
+  uint8_t temp = (addr & 0xf) << 12 | 
+                 (static_cast<uint8_t>(cmd)  & 0x3) << 10 | 
+                 (data & 0x3ff);
                         
-  char    txdata[2] = {temp & 0xff, (temp & 0xff00) >> 8};
-  char    rxdata[2] = {0, 0};
+  char txdata[2] = {temp & 0xff, (temp & 0xff00) >> 8};
+  char rxdata[2] = {0, 0};
 
   spi_xfer (rxdata, txdata, 2);
 }
