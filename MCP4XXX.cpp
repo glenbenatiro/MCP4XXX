@@ -76,7 +76,7 @@ write_data (uint8_t           addr,
   char txdata[2] = {temp & 0xff, (temp & 0xff00) >> 8};
   char rxdata[2] = {0, 0};
 
-  spi_xfer (rxdata, txdata, 2);
+  // spi_xfer (rxdata, txdata, 2);
 }
 
 bool MCP4XXX::
