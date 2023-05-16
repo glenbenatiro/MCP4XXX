@@ -48,7 +48,7 @@ class MCP4XXX
 
   protected:
     void*     m_controller;
-    unsigned  m_spi_channel;
+    unsigned  m_SPI_channel;
 
   public:
     enum class PART_NUMBER
@@ -89,8 +89,7 @@ class MCP4XXX
     uint16_t  hw_wiper_value              ();
   
   protected:
-    virtual void init     (void* controller, unsigned spi_channel = 1)  = 0;
-    virtual void spi_xfer (char* rxd, char* txd, unsigned length)       = 0;
+    virtual void spi_xfer (char* rxd, char* txd, unsigned length) = 0;
 
   public:
     MCP4XXX   (MCP4XXX::PART_NUMBER part, MCP4XXX::RESISTANCE_VERSION resistance);
