@@ -2,6 +2,7 @@
 
 #include <cmath>
 #include <stdexcept>
+#include <iostream>
 
 MCP4XXX::
 MCP4XXX (MCP4XXX::PART_NUMBER part, 
@@ -58,7 +59,7 @@ void MCP4XXX::
 write_data (uint8_t          addr, 
             MCP4XXX::COMMAND cmd)
 {
-  char txdata = (addr & 0xf) << 4 | (static_cast<uint8_t>(cmd) & 0x3) << 2;
+  char txdata = ((addr & 0xF) << 4) | ((static_cast<uint8_t>(cmd) & 0x3) << 2);
   char rxdata = 0;
 
   spi_xfer (&rxdata, &txdata, 1);
@@ -69,14 +70,15 @@ write_data (uint8_t           addr,
             MCP4XXX::COMMAND  cmd, 
             uint16_t          data)
 {
-  uint8_t temp = (addr & 0xf) << 12 | 
-                 (static_cast<uint8_t>(cmd)  & 0x3) << 10 | 
-                 (data & 0x3ff);
+  uint16_t temp = (addr & 0xF) << 12                      | 
+                  (static_cast<uint8_t>(cmd) & 0x3) << 10 |
+                  (data & 0x3FF);
                         
-  char txdata[2] = {temp & 0xff, (temp & 0xff00) >> 8};
+  char txdata[2] = {static_cast<char>((temp & 0xFF00) >> 8), 
+                    static_cast<char>(temp & 0xFF)}; // MS byte sent first
   char rxdata[2] = {0, 0};
 
-  // spi_xfer (rxdata, txdata, 2);
+  spi_xfer (rxdata, txdata, 2);
 }
 
 bool MCP4XXX::
@@ -95,7 +97,7 @@ is_valid_resistance (double value)
 uint16_t MCP4XXX:: 
 hw_wiper_value ()
 {
-
+  return 0;
 }
 
 void MCP4XXX::
@@ -170,6 +172,23 @@ resistance (bool   channel,
   }
 
   return (m_theoretical_resistance);
+}
+
+double MCP4XXX::
+resistance_per (bool   channel,
+                double value)
+{
+  if (value <= 100.0 && value >= 0.0)
+  { 
+    double actual_resistance = ((value / 100.0) * (m_max_resistance - 
+     m_min_resistance)) + m_min_resistance;
+
+     return (resistance (channel, actual_resistance));
+  }
+  else 
+  {
+    throw (std::out_of_range ("resistance_per () value invalid."));
+  }
 }
 
 // eof

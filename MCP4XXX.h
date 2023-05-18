@@ -48,7 +48,7 @@ class MCP4XXX
 
   protected:
     void*     m_controller;
-    unsigned  m_SPI_channel;
+    unsigned  m_cs;
 
   public:
     enum class PART_NUMBER
@@ -94,9 +94,10 @@ class MCP4XXX
   public:
     MCP4XXX   (MCP4XXX::PART_NUMBER part, MCP4XXX::RESISTANCE_VERSION resistance);
     
-    void    increment   (bool channel, unsigned steps = 1);
-    void    decrement   (bool channel, unsigned steps = 1);
-    double  resistance  (bool channel, double value);
+    void    increment       (bool channel, unsigned steps = 1);
+    void    decrement       (bool channel, unsigned steps = 1);
+    double  resistance      (bool channel, double value);
+    double  resistance_per  (bool channel, double value);
 };
 
 #endif
