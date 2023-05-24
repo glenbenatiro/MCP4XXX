@@ -6,7 +6,6 @@
 class MCP4XXX
 {
   // https://ww1.microchip.com/downloads/en/DeviceDoc/22059b.pdf
-
   private:
     enum class WIPER_ADDR
     {
@@ -44,12 +43,6 @@ class MCP4XXX
       READ      = 3
     };
 
-    static constexpr double WIPER_RESISTANCE  = 75; 
-
-  protected:
-    void*     m_controller;
-    unsigned  m_cs;
-
   public:
     enum class PART_NUMBER
     {
@@ -65,21 +58,36 @@ class MCP4XXX
 
     enum class RESISTANCE_VERSION
     {
+      // typical values
+
       _502  = 5'000,
       _103  = 10'000,
       _503  = 50'000,
       _104  = 100'000
     };
-
+  
+  private:
+    static constexpr double WIPER_RESISTANCE  = 75.0; // typical
+    static constexpr double MIN_RESISTANCE    = WIPER_RESISTANCE;
+  
   private: 
-    uint16_t  m_wiper_value             = 0x80;
-    unsigned  m_resolution_int          = 8,
-              m_resolution_bits         = 256;
-    double    m_max_resistance          = 50'000.0,
-              m_step_resistance         = 195.3125,
-              m_theoretical_resistance  = 25'000.0 + WIPER_RESISTANCE,
-              m_min_resistance          = WIPER_RESISTANCE;
-    
+    uint16_t  m_wiper_value             = 0;
+    unsigned  m_resolution_int          = 0, //
+              m_resolution_bits         = 0; //
+    double    m_max_resistance          = 0, //
+              m_step_resistance         = 0, //
+              m_theoretical_resistance  = 0;
+
+  protected:
+    void*     m_controller;
+    unsigned  m_cs;
+
+  public:
+    static constexpr double MAX_VDD_VOLTAGE_WRT_VSS =  7.0;
+    static constexpr double MAX_AMPLITUDE           = MAX_VDD_VOLTAGE_WRT_VSS / 2.0;
+    static constexpr double MIN_AMPLITUDE           = -1.0 * MAX_AMPLITUDE;
+  
+  private:
     void      resolution                  (MCP4XXX::PART_NUMBER part);
     void      total_resistance            (MCP4XXX::RESISTANCE_VERSION resistance);
     void      theoretical_resistance      (unsigned wiper_value);
@@ -98,6 +106,8 @@ class MCP4XXX
     void    decrement       (bool channel, unsigned steps = 1);
     double  resistance      (bool channel, double value);
     double  resistance_per  (bool channel, double value);
+    double  max_resistance  ();
+    double  min_resistance  ();
 };
 
 #endif

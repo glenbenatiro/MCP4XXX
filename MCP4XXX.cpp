@@ -84,14 +84,7 @@ write_data (uint8_t           addr,
 bool MCP4XXX::
 is_valid_resistance (double value)
 {
-  if (value <= m_max_resistance && value >= m_min_resistance)
-  {
-    return (true);
-  }
-  else 
-  {
-    return (false);
-  }
+  return (value <= m_max_resistance && value >= MIN_RESISTANCE);
 }
 
 uint16_t MCP4XXX:: 
@@ -155,6 +148,8 @@ resistance (bool   channel,
     double n = std::round ((m_resolution_int * 
       (value - WIPER_RESISTANCE)) / m_max_resistance);
 
+    std::cout << "n is: " << n << std::endl; 
+
     m_wiper_value = static_cast<uint16_t>(n);
 
     write_data (
@@ -181,7 +176,7 @@ resistance_per (bool   channel,
   if (value <= 100.0 && value >= 0.0)
   { 
     double actual_resistance = ((value / 100.0) * (m_max_resistance - 
-     m_min_resistance)) + m_min_resistance;
+     MIN_RESISTANCE)) + MIN_RESISTANCE;
 
      return (resistance (channel, actual_resistance));
   }
@@ -189,6 +184,18 @@ resistance_per (bool   channel,
   {
     throw (std::out_of_range ("resistance_per () value invalid."));
   }
+}
+
+double MCP4XXX::
+max_resistance ()
+{
+  return (m_max_resistance);
+}
+
+double MCP4XXX::
+min_resistance ()
+{
+  return (MIN_RESISTANCE);
 }
 
 // eof
