@@ -79,7 +79,7 @@ class MCP4XXX
               m_theoretical_resistance  = 0;
 
   protected:
-    void*     m_controller;
+    void*     m_presenter;
     unsigned  m_cs;
 
   public:
